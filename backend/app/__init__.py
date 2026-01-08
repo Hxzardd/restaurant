@@ -11,4 +11,13 @@ def create_app():
     db.init_app(app)
     jwt.init_app(app)
 
+    from app.routes.auth import auth
+    app.register_blueprint(auth)
+    
+    from app.routes.menu import menu
+    app.register_blueprint(menu)
+
+    from app.routes.orders import orders
+    app.register_blueprint(orders)
+
     return app
