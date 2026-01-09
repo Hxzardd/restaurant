@@ -18,7 +18,8 @@ function Navbar() {
       <Link to="/orders">My Orders</Link> |{" "}
       {user?.isAdmin && (
         <>
-          <Link to="/admin/orders">Admin</Link> |{" "}
+          <Link to="/admin/orders">Admin Orders</Link> |{" "}
+          <Link to="/admin/menu">Admin Menu</Link> |{" "}
         </>
       )}
       <button onClick={handleLogout}>Logout</button>

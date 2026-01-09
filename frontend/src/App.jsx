@@ -9,6 +9,7 @@ import Menu from "./pages/Menu";
 import Cart from "./pages/Cart";
 import Orders from "./pages/Orders";
 import AdminOrders from "./pages/AdminOrders";
+import AdminMenu from "./pages/AdminMenu";
 
 
 function App() {
@@ -38,7 +39,10 @@ function App() {
           path="/admin/orders"
           element={user ? <AdminOrders /> : <Navigate to="/" replace />}
         />
-
+        <Route
+        path="/admin/menu"
+        element={user ? <AdminMenu /> : <Navigate to="/" replace />}
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
