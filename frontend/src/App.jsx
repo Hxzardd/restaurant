@@ -8,6 +8,8 @@ import Signup from "./pages/Signup";
 import Menu from "./pages/Menu";
 import Cart from "./pages/Cart";
 import Orders from "./pages/Orders";
+import AdminOrders from "./pages/AdminOrders";
+
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -31,6 +33,10 @@ function App() {
         <Route
           path="/orders"
           element={user ? <Orders /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/admin/orders"
+          element={user ? <AdminOrders /> : <Navigate to="/" replace />}
         />
 
         <Route path="*" element={<Navigate to="/" replace />} />

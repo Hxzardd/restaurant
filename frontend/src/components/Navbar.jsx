@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 function Navbar() {
-  const { logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -16,6 +16,11 @@ function Navbar() {
       <Link to="/menu">Menu</Link> |{" "}
       <Link to="/cart">Cart</Link> |{" "}
       <Link to="/orders">My Orders</Link> |{" "}
+      {user?.isAdmin && (
+        <>
+          <Link to="/admin/orders">Admin</Link> |{" "}
+        </>
+      )}
       <button onClick={handleLogout}>Logout</button>
     </nav>
   );
