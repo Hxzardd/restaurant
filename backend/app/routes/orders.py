@@ -6,6 +6,9 @@ from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.menu import MenuItem
 
+from app.utils.email import send_order_ready_email
+
+
 orders = Blueprint("orders", __name__, url_prefix="/orders")
 
 def is_admin():
@@ -118,6 +121,12 @@ def update_order_status(order_id):
     order.status = new_status
 
     db.session.commit()
+
+    if new_status == "Ready":
+        send_order_ready_email(
+            order.user.email,
+            order.id
+        )
 
     return jsonify({"msg": "Order status updated"}), 200
 

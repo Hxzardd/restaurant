@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from .config import Config
+from .extensions import db, jwt, mail
 from .extensions import db, jwt
 
 def create_app():
@@ -10,6 +11,7 @@ def create_app():
     CORS(app)
     db.init_app(app)
     jwt.init_app(app)
+    mail.init_app(app)
 
     from app.routes.auth import auth
     app.register_blueprint(auth)
