@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 
@@ -20,13 +20,20 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {user && (
-          <>
-            <Route path="/menu" element={<Menu />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/orders" element={<Orders />} />
-          </>
-        )}
+        <Route
+          path="/menu"
+          element={user ? <Menu /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/cart"
+          element={user ? <Cart /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/orders"
+          element={user ? <Orders /> : <Navigate to="/" replace />}
+        />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
