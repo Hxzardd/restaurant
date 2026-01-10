@@ -19,38 +19,53 @@ function Login() {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-10">
+          <h2 className="text-4xl font-bold text-gray-900 mb-10 text-center">Login</h2>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-5 py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-base"
+              />
+            </div>
 
-        <br /><br />
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full px-5 py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-base"
+              />
+            </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+            <button
+              type="submit"
+              className="w-full bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg text-lg"
+            >
+              Login
+            </button>
+          </form>
 
-        <br /><br />
-
-        <button type="submit">Login</button>
-      </form>
-
-      
-      <p style={{ marginTop: "10px" }}>
-        Don’t have an account?{" "}
-        <Link to="/signup">Signup</Link>
-      </p>
+          <p className="mt-8 text-center text-gray-600 text-base">
+            Don't have an account?{" "}
+            <Link
+              to="/signup"
+              className="text-red-600 hover:text-red-700 font-bold transition-colors duration-200"
+            >
+              Signup
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
