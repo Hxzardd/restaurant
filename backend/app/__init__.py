@@ -13,12 +13,14 @@ def create_app():
     mail.init_app(app)
 
     from app.routes.auth import auth
-    app.register_blueprint(auth)
-
     from app.routes.menu import menu
-    app.register_blueprint(menu)
-
     from app.routes.orders import orders
+
+    app.register_blueprint(auth)
+    app.register_blueprint(menu)
     app.register_blueprint(orders)
+
+    with app.app_context():
+        db.create_all()
 
     return app
