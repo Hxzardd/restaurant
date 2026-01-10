@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 from app.extensions import db
@@ -123,10 +123,9 @@ def update_order_status(order_id):
     db.session.commit()
 
     if new_status == "Ready":
-        send_order_ready_email(
-            order.user.email,
-            order.id
-        )
+        try:
+            send_order_ready_email(order.user.email, order.id)
+        except Exception as e:
+            current_app.logger.error(f"Email failed for order {order.id}: {e}")
 
     return jsonify({"msg": "Order status updated"}), 200
-

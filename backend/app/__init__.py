@@ -2,7 +2,6 @@ from flask import Flask
 from flask_cors import CORS
 from .config import Config
 from .extensions import db, jwt, mail
-from .extensions import db, jwt
 
 def create_app():
     app = Flask(__name__)
@@ -15,7 +14,7 @@ def create_app():
 
     from app.routes.auth import auth
     app.register_blueprint(auth)
-    
+
     from app.routes.menu import menu
     app.register_blueprint(menu)
 
