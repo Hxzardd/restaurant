@@ -1,6 +1,6 @@
-# 🍽️ ACM Round 2 – Restaurant Online Ordering System
+# ACM Round 2 – Restaurant Online Ordering System
 
-**Live Links**
+**Live Link**
 https://restaurant.hxzard.com   
 
 ---
@@ -186,6 +186,3 @@ npm run dev
 - **Backend:** Deployed on Render using Gunicorn  
 - **Frontend:** Deployed on Render (Vite build)  
 - **Database:** NeonDB (PostgreSQL)  
-- **Custom Domains:**
-  - Frontend: https://restaurant.hxzard.com
-  - Backend API: https://restaurant-api.hxzard.com
