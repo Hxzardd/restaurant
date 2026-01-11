@@ -7,7 +7,19 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    CORS(app)
+    CORS(
+        app,
+        resources={
+            r"/*": {
+                "origins": [
+                    "https://restaurant.hxzard.com",
+                    "http://localhost:5173"
+                ]
+            }
+        },
+        supports_credentials=True
+    )
+
     db.init_app(app)
     jwt.init_app(app)
     mail.init_app(app)

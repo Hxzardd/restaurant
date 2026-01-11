@@ -12,48 +12,56 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-lg border-b-2 border-gray-200 sticky top-0 z-50 mb-8">
+    <nav className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center space-x-10">
             <Link
               to="/menu"
-              className="px-5 py-3 text-gray-700 hover:text-red-600 font-semibold transition-all duration-200 rounded-xl hover:bg-red-50 text-base"
+              className="text-xl font-bold text-gray-900 hover:text-orange-600 transition-colors duration-200"
             >
-              Menu
+              Hxzard's Restaurant
             </Link>
-            <Link
-              to="/cart"
-              className="px-5 py-3 text-gray-700 hover:text-red-600 font-semibold transition-all duration-200 rounded-xl hover:bg-red-50 text-base"
-            >
-              Cart
-            </Link>
-            <Link
-              to="/orders"
-              className="px-5 py-3 text-gray-700 hover:text-red-600 font-semibold transition-all duration-200 rounded-xl hover:bg-red-50 text-base"
-            >
-              My Orders
-            </Link>
-            {user?.isAdmin && (
-              <>
-                <Link
-                  to="/admin/orders"
-                  className="px-5 py-3 text-gray-700 hover:text-red-600 font-semibold transition-all duration-200 rounded-xl hover:bg-red-50 text-base"
-                >
-                  Admin Orders
-                </Link>
-                <Link
-                  to="/admin/menu"
-                  className="px-5 py-3 text-gray-700 hover:text-red-600 font-semibold transition-all duration-200 rounded-xl hover:bg-red-50 text-base"
-                >
-                  Admin Menu
-                </Link>
-              </>
-            )}
+            <div className="flex items-center space-x-1">
+              <Link
+                to="/menu"
+                className="px-4 py-2 text-gray-700 hover:text-orange-600 font-medium transition-all duration-200 rounded-lg hover:bg-orange-50 active:scale-95 text-sm"
+              >
+                Menu
+              </Link>
+              <Link
+                to="/cart"
+                className="px-4 py-2 text-gray-700 hover:text-orange-600 font-medium transition-all duration-200 rounded-lg hover:bg-orange-50 active:scale-95 text-sm"
+              >
+                Cart
+              </Link>
+              <Link
+                to="/orders"
+                className="px-4 py-2 text-gray-700 hover:text-orange-600 font-medium transition-all duration-200 rounded-lg hover:bg-orange-50 active:scale-95 text-sm"
+              >
+                Orders
+              </Link>
+              {user?.isAdmin && (
+                <>
+                  <Link
+                    to="/admin/orders"
+                    className="px-4 py-2 text-gray-700 hover:text-orange-600 font-medium transition-all duration-200 rounded-lg hover:bg-orange-50 active:scale-95 text-sm"
+                  >
+                    Admin Orders
+                  </Link>
+                  <Link
+                    to="/admin/menu"
+                    className="px-4 py-2 text-gray-700 hover:text-orange-600 font-medium transition-all duration-200 rounded-lg hover:bg-orange-50 active:scale-95 text-sm"
+                  >
+                    Admin Menu
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
           <button
             onClick={handleLogout}
-            className="px-6 py-3 text-white bg-red-600 hover:bg-red-700 active:bg-red-800 font-bold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
+            className="px-5 py-2 text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-800 active:scale-95 font-semibold rounded-lg transition-all duration-200 shadow-sm hover:shadow-md text-sm"
           >
             Logout
           </button>
