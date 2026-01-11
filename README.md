@@ -17,7 +17,7 @@ The system allows users to browse a restaurant menu, place orders, and track ord
 
 ### User Features
 - User registration and login using JWT authentication
-- Browse restaurant menu
+- Browse restaurant menu.
 - Search menu items by name
 - Filter menu by category (Veg / Non-Veg) and price range
 - Add items to cart and place orders
