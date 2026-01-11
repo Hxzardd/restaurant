@@ -117,15 +117,25 @@ def update_order_status(order_id):
     if new_status not in valid_statuses:
         return jsonify({"msg": "Invalid status"}), 400
 
-    order = Order.query.get_or_404(order_id)
-    order.status = new_status
+    try:
+        order = Order.query.get_or_404(order_id)
+        order.status = new_status
+        db.session.commit()
 
-    db.session.commit()
+        # Send email notification if status is Ready (non-blocking)
+        if new_status == "Ready":
+            try:
+                # Check if user exists and has email
+                if order.user and order.user.email:
+                    send_order_ready_email(order.user.email, order.id)
+                else:
+                    current_app.logger.warning(f"Order {order.id} has no user or email")
+            except Exception as e:
+                # Log error but don't fail the request
+                current_app.logger.error(f"Email failed for order {order.id}: {e}")
 
-    if new_status == "Ready":
-        try:
-            send_order_ready_email(order.user.email, order.id)
-        except Exception as e:
-            current_app.logger.error(f"Email failed for order {order.id}: {e}")
-
-    return jsonify({"msg": "Order status updated"}), 200
+        return jsonify({"msg": "Order status updated"}), 200
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error updating order status: {e}")
+        return jsonify({"msg": "Failed to update order status"}), 500

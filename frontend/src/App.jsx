@@ -16,7 +16,6 @@ function AppContent() {
   const { user } = useContext(AuthContext);
   const location = useLocation();
   
-  // Don't show Navbar on login or signup pages
   const showNavbar = user && location.pathname !== "/" && location.pathname !== "/signup";
 
   return (
