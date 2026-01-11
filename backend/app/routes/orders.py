@@ -104,7 +104,8 @@ def all_orders():
 
     return jsonify(response), 200
 
-# Admin only to update orders
+
+#Production route to update orders cuz render sucks for sending smtp traffic
 @orders.route("/<int:order_id>/status", methods=["PUT"])
 @jwt_required()
 def update_order_status(order_id):
@@ -123,35 +124,47 @@ def update_order_status(order_id):
         order.status = new_status
         db.session.commit()
 
-        if new_status == "Ready":
-            mail_configured = (
-                current_app.config.get("MAIL_SERVER") and
-                current_app.config.get("MAIL_USERNAME") and
-                current_app.config.get("MAIL_PASSWORD")
-            )
-            
-            if mail_configured and order.user and order.user.email:
-                app = current_app._get_current_object()
-                user_email = order.user.email
-                order_id = order.id
-                
-                @copy_current_request_context
-                def send_email_with_context():
-                    with app.app_context():
-                        send_order_ready_email(user_email, order_id)
-                
-                email_thread = threading.Thread(
-                    target=send_email_with_context,
-                    daemon=True
+        # NOTE:
+        # Render blocks outbound SMTP traffic.
+        # Email sending is attempted safely and never crashes the request.
+        if new_status == "Ready" and order.user and order.user.email:
+            try:
+                send_order_ready_email(order.user.email, order.id)
+                current_app.logger.info(
+                    f"[EMAIL ATTEMPTED] Order {order.id} → {order.user.email}"
                 )
-                email_thread.start()
-            elif not mail_configured:
-                current_app.logger.debug(f"Mail not configured, skipping email for order {order.id}")
-            else:
-                current_app.logger.warning(f"Order {order.id} has no user or email")
+            except Exception as e:
+                current_app.logger.info(
+                    f"[EMAIL SKIPPED - PROD] Order {order.id}: {e}"
+                )
 
         return jsonify({"msg": "Order status updated"}), 200
+
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Error updating order status: {e}")
+        current_app.logger.error(f"Order update failed: {e}")
         return jsonify({"msg": "Failed to update order status"}), 500
+
+# Admin only to update orders (LOCAL TESTING ONLY WHICH WORKS!)
+# @orders.route("/<int:order_id>/status", methods=["PUT"])
+# @jwt_required()
+# def update_order_status_local(order_id):
+#     if not is_admin():
+#         return jsonify({"msg": "Admin access required"}), 403
+
+#     data = request.get_json()
+#     new_status = data.get("status")
+
+#     valid_statuses = ["Pending", "Preparing", "Ready", "Delivered"]
+#     if new_status not in valid_statuses:
+#         return jsonify({"msg": "Invalid status"}), 400
+
+#     order = Order.query.get_or_404(order_id)
+#     order.status = new_status
+#     db.session.commit()
+
+#     if new_status == "Ready" and order.user and order.user.email:
+#         send_order_ready_email(order.user.email, order.id)
+#         print(f"[EMAIL SENT - LOCAL] Order {order.id} → {order.user.email}")
+
+#     return jsonify({"msg": "Order status updated"}), 200
