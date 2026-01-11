@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 
@@ -12,12 +12,16 @@ import AdminOrders from "./pages/AdminOrders";
 import AdminMenu from "./pages/AdminMenu";
 
 
-function App() {
+function AppContent() {
   const { user } = useContext(AuthContext);
+  const location = useLocation();
+  
+  // Don't show Navbar on login or signup pages
+  const showNavbar = user && location.pathname !== "/" && location.pathname !== "/signup";
 
   return (
-    <BrowserRouter>
-      {user && <Navbar />}
+    <>
+      {showNavbar && <Navbar />}
 
       <Routes>
         <Route path="/" element={<Login />} />
@@ -45,6 +49,14 @@ function App() {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
     </BrowserRouter>
   );
 }
