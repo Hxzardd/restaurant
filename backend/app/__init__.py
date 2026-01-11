@@ -20,7 +20,9 @@ def create_app():
         supports_credentials=True
     )
 
+    # Initialize database (Flask-SQLAlchemy will automatically use SQLALCHEMY_ENGINE_OPTIONS from config)
     db.init_app(app)
+    
     jwt.init_app(app)
     mail.init_app(app)
 
