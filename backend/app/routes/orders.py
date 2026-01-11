@@ -1,5 +1,6 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, copy_current_request_context
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+import threading
 
 from app.extensions import db
 from app.models.order import Order
@@ -122,17 +123,32 @@ def update_order_status(order_id):
         order.status = new_status
         db.session.commit()
 
-        # Send email notification if status is Ready (non-blocking)
         if new_status == "Ready":
-            try:
-                # Check if user exists and has email
-                if order.user and order.user.email:
-                    send_order_ready_email(order.user.email, order.id)
-                else:
-                    current_app.logger.warning(f"Order {order.id} has no user or email")
-            except Exception as e:
-                # Log error but don't fail the request
-                current_app.logger.error(f"Email failed for order {order.id}: {e}")
+            mail_configured = (
+                current_app.config.get("MAIL_SERVER") and
+                current_app.config.get("MAIL_USERNAME") and
+                current_app.config.get("MAIL_PASSWORD")
+            )
+            
+            if mail_configured and order.user and order.user.email:
+                app = current_app._get_current_object()
+                user_email = order.user.email
+                order_id = order.id
+                
+                @copy_current_request_context
+                def send_email_with_context():
+                    with app.app_context():
+                        send_order_ready_email(user_email, order_id)
+                
+                email_thread = threading.Thread(
+                    target=send_email_with_context,
+                    daemon=True
+                )
+                email_thread.start()
+            elif not mail_configured:
+                current_app.logger.debug(f"Mail not configured, skipping email for order {order.id}")
+            else:
+                current_app.logger.warning(f"Order {order.id} has no user or email")
 
         return jsonify({"msg": "Order status updated"}), 200
     except Exception as e:
