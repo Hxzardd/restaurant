@@ -10,31 +10,35 @@ auth = Blueprint("auth", __name__, url_prefix="/auth")
 
 @auth.route("/register", methods=["POST"])
 def register():
-    data = request.get_json()
+    try:
+        data = request.get_json()
 
-    name = data.get("name")
-    email = data.get("email")
-    password = data.get("password")
+        name = data.get("name")
+        email = data.get("email")
+        password = data.get("password")
 
-    if not all([name, email, password]):
-        return jsonify({"msg": "Missing required fields"}), 400
+        if not all([name, email, password]):
+            return jsonify({"msg": "Missing required fields"}), 400
 
-    if User.query.filter_by(email=email).first():
-        return jsonify({"msg": "Email already registered"}), 409
+        if User.query.filter_by(email=email).first():
+            return jsonify({"msg": "Email already registered"}), 409
 
-    hashed_password = generate_password_hash(password)
+        hashed_password = generate_password_hash(password)
 
-    user = User(
-        name=name,
-        email=email,
-        password_hash=hashed_password,
-        is_admin=False
-    )
+        user = User(
+            name=name,
+            email=email,
+            password_hash=hashed_password,
+            is_admin=False
+        )
 
-    db.session.add(user)
-    db.session.commit()
+        db.session.add(user)
+        db.session.commit()
 
-    return jsonify({"msg": "User registered successfully"}), 201
+        return jsonify({"msg": "User registered successfully"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": f"Registration failed: {str(e)}"}), 500
 
 
 @auth.route("/login", methods=["POST"])

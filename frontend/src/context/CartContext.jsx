@@ -21,7 +21,7 @@ export function CartProvider({ children }) {
 
   const decreaseQuantity = (id) => {
     setCart((prev) =>
-      prev
+      prev  
         .map((item) =>
           item.id === id
             ? { ...item, quantity: item.quantity - 1 }

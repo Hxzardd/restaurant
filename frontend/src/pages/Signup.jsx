@@ -12,15 +12,22 @@ function Signup() {
     e.preventDefault();
 
     try {
-      await api.post("/auth/register", {
+      const response = await api.post("/auth/register", {
         name,
         email,
         password,
       });
 
-      navigate("/");
+      // Check if the response is successful (status 200-299)
+      if (response.status >= 200 && response.status < 300) {
+        navigate("/");
+      } else {
+        alert(response.data?.msg || "Signup failed");
+      }
     } catch (err) {
-      alert("Signup failed");
+      // Only show error if it's actually an error response
+      const errorMessage = err.response?.data?.msg || err.message || "Signup failed";
+      alert(errorMessage);
     }
   };
 
