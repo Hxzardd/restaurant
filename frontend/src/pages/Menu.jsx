@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import api from "../api/axios";
 import { CartContext } from "../context/CartContext";
+import Footer from "../components/Footer";
 
 function Menu() {
   const [menu, setMenu] = useState([]);
@@ -56,11 +57,34 @@ function Menu() {
 
   return (
     <div className="min-h-screen bg-zinc-50 page-fade-in">
-      {/* Hero Section */}
-      <div className="bg-white border-b border-gray-200 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">Crafted Flavours, Delivered Fresh</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">Restaurant-quality meals, made to order and delivered hot</p>
+      {/* Hero Section - Level 3 & 4 Enhanced */}
+      <div className="bg-gradient-to-br from-orange-50 via-white to-orange-25 border-b border-orange-100 py-16 px-4 sm:px-6 lg:px-8 page-fade-in">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-block mb-4 px-4 py-2 bg-orange-100 rounded-full scale-in">
+            <span className="text-sm font-semibold text-orange-700">Taste the Difference</span>
+          </div>
+          <h1 className="text-6xl sm:text-7xl font-bold text-gray-900 mb-6 float-up">Crafted Flavours, Delivered Fresh</h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8 float-up" style={{animationDelay: "0.1s"}}>Restaurant-quality meals, made to order and delivered hot to your door</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-gray-700 float-up" style={{animationDelay: "0.2s"}}>
+            <div className="flex items-center gap-2 hover:text-orange-600 transition-colors">
+              <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+              </svg>
+              <span>Fresh ingredients daily</span>
+            </div>
+            <div className="flex items-center gap-2 hover:text-orange-600 transition-colors">
+              <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+              </svg>
+              <span>Made to order</span>
+            </div>
+            <div className="flex items-center gap-2 hover:text-orange-600 transition-colors">
+              <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+              </svg>
+              <span>Hot delivery</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -146,43 +170,58 @@ function Menu() {
 
         {!loading && menu.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {menu.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col border border-gray-200"
-              >
-                <div className="p-6 flex-1 flex flex-col">
-                  <div className="mb-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <h3 className="text-lg font-bold text-gray-900 leading-tight flex-1 pr-2">
-                        {item.name}
-                      </h3>
-                      {item.category === "Veg" && (
-                        <span className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500 border-2 border-green-600"></span>
-                      )}
-                      {item.category === "Non-Veg" && (
-                        <span className="flex-shrink-0 w-5 h-5 rounded-full bg-red-600 border-2 border-red-700"></span>
-                      )}
+            {menu.map((item, idx) => {
+              const isPopular = idx < 3; // First 3 items are marked as popular
+              return (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-xl shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col border border-gray-200 relative group"
+                >
+                  {isPopular && (
+                    <div className="absolute -top-2 -right-2 z-10 badge-pop">
+                      <div className="bg-orange-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg transform rotate-12">
+                        Popular
+                      </div>
                     </div>
-                    <p className="text-2xl font-bold text-orange-600 mb-3">
-                      ₹{item.price}
+                  )}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <div className="mb-4">
+                      <div className="flex items-start justify-between mb-3">
+                        <h3 className="text-lg font-bold text-gray-900 leading-tight flex-1 pr-2">
+                          {item.name}
+                        </h3>
+                        {item.category === "Veg" && (
+                          <span className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500 border-2 border-green-600"></span>
+                        )}
+                        {item.category === "Non-Veg" && (
+                          <span className="flex-shrink-0 w-5 h-5 rounded-full bg-red-600 border-2 border-red-700"></span>
+                        )}
+                      </div>
+                      <p className="text-2xl font-bold text-orange-600 mb-3">
+                        ₹{item.price}
+                      </p>
+                    </div>
+                    <p className="text-gray-600 text-sm mb-6 flex-1 leading-relaxed line-clamp-2">
+                      {item.description}
                     </p>
+                    <button
+                      onClick={() => addToCart(item)}
+                      className={`w-full font-bold py-3 px-6 rounded-lg transition-all duration-200 text-base mt-auto ${
+                        isPopular
+                          ? "bg-orange-600 hover:bg-orange-700 active:bg-orange-800 active:scale-95 text-white shadow-lg hover:shadow-xl"
+                          : "bg-orange-600 hover:bg-orange-700 active:bg-orange-800 active:scale-95 text-white shadow-md hover:shadow-lg"
+                      }`}
+                    >
+                      Add to Cart
+                    </button>
                   </div>
-                  <p className="text-gray-600 text-sm mb-6 flex-1 leading-relaxed line-clamp-2">
-                    {item.description}
-                  </p>
-                  <button
-                    onClick={() => addToCart(item)}
-                    className="w-full bg-orange-600 hover:bg-orange-700 active:bg-orange-800 active:scale-95 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-base mt-auto"
-                  >
-                    Add to Cart
-                  </button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
+import Footer from "../components/Footer";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -147,6 +148,7 @@ function Orders() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

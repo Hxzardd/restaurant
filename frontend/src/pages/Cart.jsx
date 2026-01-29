@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
 function Cart() {
   const {
@@ -113,32 +114,36 @@ function Cart() {
               ))}
             </div>
 
-            {/* Order Summary */}
+            {/* Order Summary - Level 3 Improved */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24 border border-gray-200">
+              <div className="bg-gradient-to-b from-orange-50 to-white rounded-xl shadow-xl p-6 sticky top-24 border-2 border-orange-200">
                 <h3 className="text-lg font-bold text-gray-900 mb-6">Order Summary</h3>
-                <div className="space-y-4 mb-6">
-                  <div className="flex justify-between text-gray-600">
-                    <span className="text-sm">Subtotal</span>
-                    <span className="font-semibold">₹{total}</span>
+                <div className="space-y-3 mb-7 bg-white rounded-lg p-4">
+                  <div className="flex justify-between text-gray-600 text-sm">
+                    <span>Subtotal</span>
+                    <span className="font-semibold text-gray-900">₹{total}</span>
                   </div>
-                  <div className="flex justify-between text-gray-600">
-                    <span className="text-sm">Delivery</span>
-                    <span className="font-semibold text-green-600">Free</span>
+                  <div className="flex justify-between text-gray-600 text-sm">
+                    <span>Delivery Fee</span>
+                    <span className="font-semibold text-green-600">FREE</span>
                   </div>
-                  <div className="border-t border-gray-200 pt-4">
+                  <div className="flex justify-between text-gray-600 text-sm">
+                    <span>Tax & Charges</span>
+                    <span className="font-semibold text-gray-900">Included</span>
+                  </div>
+                  <div className="border-t border-gray-200 pt-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-base font-bold text-gray-900">Total</span>
-                      <span className="text-2xl font-bold text-orange-600">₹{total}</span>
+                      <span className="text-sm font-bold text-gray-900">Total Amount</span>
+                      <span className="text-3xl font-bold text-orange-600">₹{total}</span>
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={placeOrder}
                   disabled={loading}
-                  className="w-full bg-orange-600 hover:bg-orange-700 active:bg-orange-800 active:scale-95 text-white font-bold py-4 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-base mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-orange-600 hover:bg-orange-700 active:bg-orange-800 active:scale-95 text-white font-bold py-4 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-base mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? "Placing Order..." : "Place Order"}
+                  {loading ? "Placing Order..." : "Place Order Now"}
                 </button>
                 <button
                   onClick={clearCart}
@@ -152,6 +157,7 @@ function Cart() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }
