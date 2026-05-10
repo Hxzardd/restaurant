@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx vite *)"
+      "Bash(npx vite *)",
+      "Bash(python seed_menu.py)",
+      "Bash(python -c ' *)"
     ]
   }
 }
