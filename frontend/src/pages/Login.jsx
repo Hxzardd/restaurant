@@ -3,69 +3,129 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const [error, setError]       = useState("");
+  const [loading, setLoading]   = useState(false);
+  const { login }               = useContext(AuthContext);
+  const navigate                = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
     try {
       await login(email, password);
       navigate("/menu");
-    } catch (err) {
-      alert("Login failed");
+    } catch {
+      setError("Invalid email or password. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 page-fade-in">
-      <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-xl p-10 border border-gray-200">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-orange-600 mb-1">Hxzard's Restaurant</h1>
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Welcome Back</h2>
-            <p className="text-gray-500 text-sm">Sign in to your account</p>
+    <div
+      className="min-h-screen flex items-center justify-center py-16 px-4"
+      style={{
+        background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(224,144,64,0.08) 0%, #0f0d0b 70%)",
+      }}
+    >
+      {/* Decorative rings */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div
+          className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full"
+          style={{ border: "1px solid rgba(224,144,64,0.06)" }}
+        />
+        <div
+          className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full"
+          style={{ border: "1px solid rgba(224,144,64,0.08)" }}
+        />
+      </div>
+
+      <div className="relative w-full max-w-md page-fade-in">
+        {/* Card */}
+        <div
+          className="rounded-2xl border p-10"
+          style={{ backgroundColor: "#1d1915", borderColor: "#38302a", boxShadow: "0 24px 80px rgba(0,0,0,0.6)" }}
+        >
+          {/* Header */}
+          <div className="text-center mb-10">
+            <p
+              className="font-display text-sm font-semibold tracking-widest uppercase mb-3"
+              style={{ color: "#e09040" }}
+            >
+              Hxzard's Restaurant
+            </p>
+            <h1
+              className="font-display text-5xl font-bold mb-3"
+              style={{ color: "#f2ece0", lineHeight: "1.1" }}
+            >
+              Welcome Back
+            </h1>
+            <p className="text-sm" style={{ color: "#5c4e42" }}>
+              Sign in to continue ordering
+            </p>
           </div>
+
+          {error && (
+            <div
+              className="mb-6 px-4 py-3 rounded-lg text-sm border"
+              style={{ backgroundColor: "rgba(200,90,90,0.1)", borderColor: "rgba(200,90,90,0.25)", color: "#e08080" }}
+            >
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+              <label className="block text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: "#a89478" }}>
+                Email Address
+              </label>
               <input
                 type="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white focus:border-transparent text-base transition-all duration-200"
+                className="input-field"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+              <label className="block text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: "#a89478" }}>
+                Password
+              </label>
               <input
                 type="password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white focus:border-transparent text-base transition-all duration-200"
+                className="input-field"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-orange-600 hover:bg-orange-700 active:bg-orange-800 active:scale-95 text-white font-bold py-3.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-base mt-8"
+              disabled={loading}
+              className="w-full py-3.5 font-semibold rounded-lg transition-all duration-200 active:scale-95 mt-2"
+              style={{ backgroundColor: "#e09040", color: "#0f0d0b" }}
+              onMouseEnter={e => !loading && (e.currentTarget.style.backgroundColor = "#cc7e2e")}
+              onMouseLeave={e => !loading && (e.currentTarget.style.backgroundColor = "#e09040")}
             >
-              Sign In
+              {loading ? "Signing in…" : "Sign In"}
             </button>
           </form>
 
-          <p className="mt-8 text-center text-gray-600 text-sm">
-            Don't have an account?{" "}
+          <p className="mt-8 text-center text-sm" style={{ color: "#5c4e42" }}>
+            No account yet?{" "}
             <Link
               to="/signup"
-              className="text-orange-600 hover:text-orange-700 font-semibold transition-colors duration-200"
+              className="font-semibold transition-colors duration-200"
+              style={{ color: "#e09040" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "#cc7e2e")}
+              onMouseLeave={e => (e.currentTarget.style.color = "#e09040")}
             >
               Create one
             </Link>

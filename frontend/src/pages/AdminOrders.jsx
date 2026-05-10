@@ -3,10 +3,39 @@ import api from "../api/axios";
 
 const STATUS_OPTIONS = ["Pending", "Preparing", "Ready", "Delivered"];
 
+const STATUS_META = {
+  pending:   { bg: "rgba(212,170,60,0.12)",  color: "#d4aa3c" },
+  preparing: { bg: "rgba(80,140,220,0.12)",  color: "#6a9fe0" },
+  ready:     { bg: "rgba(140,90,220,0.12)",  color: "#b080e0" },
+  delivered: { bg: "rgba(90,178,133,0.12)",  color: "#5ab285" },
+};
+
+function getMeta(status) {
+  const key = status?.toLowerCase() || "";
+  for (const [k, v] of Object.entries(STATUS_META)) {
+    if (key.includes(k)) return v;
+  }
+  return { bg: "rgba(90,90,90,0.12)", color: "#888" };
+}
+
+const SkeletonOrder = () => (
+  <div className="rounded-xl border p-6" style={{ backgroundColor: "#1d1915", borderColor: "#2a2320" }}>
+    <div className="flex items-center gap-3 mb-5 pb-4 border-b" style={{ borderColor: "#2a2320" }}>
+      <div className="skeleton h-5 w-28 rounded" />
+      <div className="skeleton h-5 w-16 rounded-full" />
+    </div>
+    <div className="skeleton h-11 rounded-lg mb-5" />
+    <div className="space-y-2">
+      <div className="skeleton h-9 rounded-lg" />
+      <div className="skeleton h-9 rounded-lg" />
+    </div>
+  </div>
+);
+
 function AdminOrders() {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [orders, setOrders]       = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState("");
   const [updateError, setUpdateError] = useState("");
 
   const fetchOrders = async () => {
@@ -16,180 +45,138 @@ function AdminOrders() {
       const res = await api.get("/orders/all");
       setOrders(res.data);
     } catch (err) {
-      const errorMsg = err.response?.data?.msg || err.message || "Failed to load orders. Please try again.";
-      setError(errorMsg);
-      console.error("Failed to fetch admin orders", err);
+      setError(err.response?.data?.msg || "Failed to load orders.");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  useEffect(() => { fetchOrders(); }, []);
 
   const updateStatus = async (orderId, status) => {
     try {
       setUpdateError("");
       await api.put(`/orders/${orderId}/status`, { status });
-      fetchOrders(); // this rfreshes the list
+      fetchOrders();
     } catch (err) {
-      const errorMsg = err.response?.data?.msg || "Failed to update status";
-      setUpdateError(errorMsg);
+      setUpdateError(err.response?.data?.msg || "Failed to update status.");
     }
   };
 
-  const getStatusColor = (status) => {
-    const statusLower = status?.toLowerCase() || "";
-    if (statusLower.includes("pending")) return "bg-yellow-100 text-yellow-800";
-    if (statusLower.includes("preparing")) return "bg-blue-100 text-blue-800";
-    if (statusLower.includes("ready")) return "bg-purple-100 text-purple-800";
-    if (statusLower.includes("delivered")) return "bg-green-100 text-green-800";
-    return "bg-gray-100 text-gray-800";
-  };
-
-  const getStatusAnimation = (status) => {
-    const statusLower = status?.toLowerCase() || "";
-    if (statusLower.includes("preparing")) return "pulse-subtle";
-    return "";
-  };
-
-  // Skeleton loader
-  const SkeletonOrder = () => (
-    <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 animate-pulse">
-      <div className="flex items-start justify-between mb-6 pb-4 border-b border-gray-200">
-        <div className="flex-1">
-          <div className="h-6 bg-gray-200 rounded w-32 mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-48"></div>
-        </div>
-      </div>
-      <div className="h-12 bg-gray-200 rounded-lg mb-6"></div>
-      <div className="space-y-2">
-        <div className="h-10 bg-gray-200 rounded-lg"></div>
-        <div className="h-10 bg-gray-200 rounded-lg"></div>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-zinc-50 py-8 px-4 sm:px-6 lg:px-8 page-fade-in">
+    <div className="py-10 px-4 sm:px-6 lg:px-8 page-fade-in">
       <div className="max-w-5xl mx-auto">
+        {/* Header */}
         <div className="mb-8">
-          <h2 className="text-4xl font-bold text-gray-900 mb-2">Admin Dashboard</h2>
-          <p className="text-gray-600">Manage and track all orders</p>
+          <h2
+            className="font-display font-bold mb-1"
+            style={{ fontSize: "clamp(2rem, 5vw, 3rem)", color: "#f2ece0" }}
+          >
+            Order Management
+          </h2>
+          <p className="text-sm" style={{ color: "#5c4e42" }}>
+            Review and update the status of all incoming orders.
+          </p>
         </div>
 
-        {/* Error state */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
-            <div className="flex items-start gap-3">
-              <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" />
-              </svg>
-              <div>
-                <p className="font-semibold text-red-900">Unable to load orders</p>
-                <p className="text-red-700 text-sm mt-1">{error}</p>
-              </div>
-            </div>
+        {/* Errors */}
+        {(error || updateError) && (
+          <div
+            className="rounded-xl border px-5 py-4 mb-6 text-sm"
+            style={{ backgroundColor: "rgba(200,90,90,0.08)", borderColor: "rgba(200,90,90,0.2)", color: "#e08080" }}
+          >
+            {error || updateError}
           </div>
         )}
 
-        {/* Update error state */}
-        {updateError && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
-            <div className="flex items-start gap-3">
-              <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" />
-              </svg>
-              <div>
-                <p className="font-semibold text-red-900">Update failed</p>
-                <p className="text-red-700 text-sm mt-1">{updateError}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Loading state */}
         {loading && (
-          <div className="space-y-6">
-            {[...Array(3)].map((_, i) => (
-              <SkeletonOrder key={i} />
-            ))}
+          <div className="space-y-4">
+            {[...Array(3)].map((_, i) => <SkeletonOrder key={i} />)}
           </div>
         )}
 
-        {/* Empty state */}
-        {!loading && orders.length === 0 && (
-          <div className="bg-white rounded-xl shadow-md p-16 text-center border border-gray-200">
-            <svg className="mx-auto h-20 w-20 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            <p className="text-gray-700 text-xl font-semibold mb-2">No orders found</p>
-            <p className="text-gray-500 text-sm">Orders will appear here when customers place them</p>
+        {!loading && orders.length === 0 && !error && (
+          <div
+            className="rounded-xl border p-16 text-center"
+            style={{ backgroundColor: "#1d1915", borderColor: "#38302a" }}
+          >
+            <div className="text-5xl mb-5">📋</div>
+            <p className="font-display text-2xl font-bold mb-2" style={{ color: "#f2ece0" }}>No orders yet</p>
+            <p className="text-sm" style={{ color: "#5c4e42" }}>Orders will appear here when customers place them.</p>
           </div>
         )}
 
-        {/* Orders list */}
         {!loading && orders.length > 0 && (
-          <div className="space-y-6">
-            {orders.map((order) => (
-              <div
-                key={order.order_id}
-                className="bg-white rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-6 border border-gray-200"
-              >
-                <div className="flex items-start justify-between mb-6 pb-4 border-b border-gray-200">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-lg font-bold text-gray-900">
-                        Order #{order.order_id}
-                      </h3>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(order.status)} ${getStatusAnimation(order.status)}`}
-                      >
-                        {order.status}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      <span className="font-medium">User ID:</span> {order.user_id}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Update Status
-                  </label>
-                  <select
-                    value={order.status}
-                    onChange={(e) =>
-                      updateStatus(order.order_id, e.target.value)
-                    }
-                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-base font-medium transition-all duration-200"
+          <div className="space-y-4">
+            {orders.map((order, oi) => {
+              const meta = getMeta(order.status);
+              const isPreparing = order.status?.toLowerCase().includes("preparing");
+              return (
+                <div
+                  key={order.order_id}
+                  className="card-hover p-6"
+                  style={{ animationDelay: `${oi * 0.05}s` }}
+                >
+                  {/* Header row */}
+                  <div
+                    className="flex items-start justify-between mb-5 pb-4 border-b"
+                    style={{ borderColor: "#2a2320" }}
                   >
-                    {STATUS_OPTIONS.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <p className="text-sm font-semibold text-gray-700 mb-3">Order Items</p>
-                  <div className="space-y-2">
-                    {order.items.map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center justify-between py-2.5 px-4 bg-gray-50 rounded-lg"
-                      >
-                        <span className="font-medium text-gray-900">{item.name}</span>
-                        <span className="text-gray-700 font-semibold">× {item.quantity}</span>
+                    <div>
+                      <div className="flex items-center gap-3 mb-1">
+                        <h3 className="font-display text-lg font-bold" style={{ color: "#f2ece0" }}>
+                          Order #{order.order_id}
+                        </h3>
+                        <span
+                          className={`status-badge ${isPreparing ? "pulse-subtle" : ""}`}
+                          style={{ backgroundColor: meta.bg, color: meta.color }}
+                        >
+                          {order.status}
+                        </span>
                       </div>
-                    ))}
+                      <p className="text-xs" style={{ color: "#5c4e42" }}>
+                        Customer ID: {order.user_id}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Status selector */}
+                  <div className="mb-5">
+                    <label className="block text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: "#5c4e42" }}>
+                      Update Status
+                    </label>
+                    <select
+                      value={order.status}
+                      onChange={(e) => updateStatus(order.order_id, e.target.value)}
+                      className="input-field"
+                    >
+                      {STATUS_OPTIONS.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Items */}
+                  <div>
+                    <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: "#5c4e42" }}>
+                      Order Items
+                    </p>
+                    <div className="space-y-2">
+                      {order.items.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between px-4 py-2.5 rounded-lg"
+                          style={{ backgroundColor: "#151210" }}
+                        >
+                          <span className="text-sm font-medium" style={{ color: "#a89478" }}>{item.name}</span>
+                          <span className="text-sm font-semibold" style={{ color: "#5c4e42" }}>× {item.quantity}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
