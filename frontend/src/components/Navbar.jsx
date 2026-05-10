@@ -2,6 +2,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { CartContext } from "../context/CartContext";
+import { ShoppingBag, LogOut, LayoutDashboard, UtensilsCrossed, ReceiptText } from "lucide-react";
+import { motion } from "framer-motion";
+import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
 
 function Navbar() {
   const { user, logout } = useContext(AuthContext);
@@ -18,58 +22,77 @@ function Navbar() {
 
   const isActive = (path) => location.pathname === path;
 
-  const linkClass = (path) =>
-    `relative px-3 py-1.5 text-sm font-medium transition-all duration-200 rounded-md ${
-      isActive(path)
-        ? "text-ember-DEFAULT"
-        : "text-cream-secondary hover:text-cream"
-    }`;
+  const NavLink = ({ to, icon: Icon, children }) => (
+    <Link
+      to={to}
+      className={twMerge(
+        clsx(
+          "relative flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-200 rounded-md",
+          isActive(to)
+            ? "text-sage-700"
+            : "text-forest-muted hover:text-sage-600"
+        )
+      )}
+    >
+      {Icon && <Icon size={16} />}
+      {children}
+      {isActive(to) && (
+        <motion.div
+          layoutId="navbar-indicator"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-sage-500 rounded-full"
+          initial={false}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+        />
+      )}
+    </Link>
+  );
 
   return (
-    <nav
-      className="sticky top-0 z-50 border-b"
-      style={{ backgroundColor: "#0f0d0b", borderColor: "#2a2320" }}
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className="sticky top-0 z-50 border-b border-sand-200 glass-panel"
     >
-      {/* Subtle top accent line */}
-      <div className="h-px w-full" style={{ background: "linear-gradient(90deg, transparent 0%, #e09040 50%, transparent 100%)", opacity: 0.5 }} />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
           {/* Brand */}
           <Link
             to="/menu"
-            className="font-display text-xl font-bold tracking-wide transition-opacity duration-200 hover:opacity-80"
-            style={{ color: "#e09040" }}
+            className="flex items-center gap-2 font-display text-xl font-bold tracking-wide transition-opacity duration-200 hover:opacity-80 text-forest"
           >
-            Hxzard's Restaurant
+            <span className="w-8 h-8 rounded-full bg-sage-100 flex items-center justify-center text-sage-600">
+               <UtensilsCrossed size={18} />
+            </span>
+            Hxzard's
           </Link>
 
           {/* Nav links */}
-          <div className="hidden sm:flex items-center gap-1">
-            <Link to="/menu"   className={linkClass("/menu")}>Menu</Link>
-            <Link to="/cart"   className={`${linkClass("/cart")} relative`}>
+          <div className="hidden sm:flex items-center gap-2">
+            <NavLink to="/menu">Menu</NavLink>
+            <NavLink to="/cart" icon={ShoppingBag}>
               Cart
               {cartCount > 0 && (
-                <span
-                  className="absolute -top-1.5 -right-1.5 w-4.5 h-4.5 text-xs font-bold rounded-full flex items-center justify-center badge-pop"
-                  style={{ backgroundColor: "#e09040", color: "#0f0d0b", width: "18px", height: "18px", fontSize: "10px" }}
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-1 -right-2 w-4 h-4 text-[10px] font-bold rounded-full flex items-center justify-center bg-sage-500 text-white"
                 >
                   {cartCount}
-                </span>
+                </motion.span>
               )}
-            </Link>
-            <Link to="/orders" className={linkClass("/orders")}>Orders</Link>
+            </NavLink>
+            <NavLink to="/orders" icon={ReceiptText}>Orders</NavLink>
 
             {user?.isAdmin && (
               <>
-                <span className="w-px h-4 mx-1" style={{ backgroundColor: "#38302a" }} />
-                <Link to="/admin/orders" className={`${linkClass("/admin/orders")} text-cream-muted`}>
+                <div className="w-px h-4 mx-2 bg-sand-300" />
+                <NavLink to="/admin/orders" icon={LayoutDashboard}>
                   Admin Orders
-                </Link>
-                <Link to="/admin/menu"   className={`${linkClass("/admin/menu")} text-cream-muted`}>
+                </NavLink>
+                <NavLink to="/admin/menu" icon={LayoutDashboard}>
                   Admin Menu
-                </Link>
+                </NavLink>
               </>
             )}
           </div>
@@ -77,16 +100,14 @@ function Navbar() {
           {/* Logout */}
           <button
             onClick={handleLogout}
-            className="px-4 py-2 text-sm font-semibold rounded-lg border transition-all duration-200 active:scale-95"
-            style={{ borderColor: "#38302a", color: "#a89478" }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = "#e09040"; e.currentTarget.style.color = "#e09040"; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "#38302a"; e.currentTarget.style.color = "#a89478"; }}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg text-forest-muted hover:text-red-600 hover:bg-red-50 transition-colors duration-200 active:scale-95"
           >
-            Log out
+            <LogOut size={16} />
+            <span className="hidden sm:inline">Log out</span>
           </button>
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 }
 

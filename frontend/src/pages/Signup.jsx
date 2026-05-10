@@ -1,6 +1,8 @@
 import { useState } from "react";
 import api from "../api/axios";
 import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { UtensilsCrossed, ArrowRight } from "lucide-react";
 
 function Signup() {
   const [name, setName]         = useState("");
@@ -29,60 +31,60 @@ function Signup() {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center py-16 px-4"
-      style={{
-        background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(224,144,64,0.08) 0%, #0f0d0b 70%)",
-      }}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen flex bg-sand flex-row-reverse"
     >
-      {/* Decorative rings */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full"
-          style={{ border: "1px solid rgba(224,144,64,0.06)" }}
+      {/* Right side: Image */}
+      <div className="hidden lg:block lg:w-1/2 relative overflow-hidden">
+        <div className="absolute inset-0 bg-sage-900/20 z-10" />
+        <img
+          src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1200&q=80"
+          alt="Delicious food"
+          className="absolute inset-0 w-full h-full object-cover"
         />
-        <div
-          className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full"
-          style={{ border: "1px solid rgba(224,144,64,0.08)" }}
-        />
+        <div className="absolute inset-0 z-20 flex flex-col justify-end p-12 text-white">
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <h2 className="font-display text-5xl font-bold mb-4">Join the family.</h2>
+            <p className="text-lg opacity-90 max-w-md">Discover a world of rich flavors and farm-to-table freshness. Create an account to start ordering.</p>
+          </motion.div>
+        </div>
       </div>
 
-      <div className="relative w-full max-w-md page-fade-in">
-        <div
-          className="rounded-2xl border p-10"
-          style={{ backgroundColor: "#1d1915", borderColor: "#38302a", boxShadow: "0 24px 80px rgba(0,0,0,0.6)" }}
-        >
+      {/* Left side: Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 bg-white">
+        <div className="w-full max-w-md">
           {/* Header */}
-          <div className="text-center mb-10">
-            <p
-              className="font-display text-sm font-semibold tracking-widest uppercase mb-3"
-              style={{ color: "#e09040" }}
-            >
-              Hxzard's Restaurant
-            </p>
-            <h1
-              className="font-display text-5xl font-bold mb-3"
-              style={{ color: "#f2ece0", lineHeight: "1.1" }}
-            >
+          <div className="mb-10 text-center lg:text-left">
+            <Link to="/" className="inline-flex items-center gap-2 font-display text-xl font-bold tracking-wide text-forest mb-8">
+              <span className="w-8 h-8 rounded-full bg-sage-100 flex items-center justify-center text-sage-600">
+                 <UtensilsCrossed size={18} />
+              </span>
+              Hxzard's
+            </Link>
+            <h1 className="font-display text-4xl font-bold mb-3 text-forest">
               Join Us
             </h1>
-            <p className="text-sm" style={{ color: "#5c4e42" }}>
-              Create an account and start ordering
+            <p className="text-forest-muted">
+              Create an account and start ordering.
             </p>
           </div>
 
           {error && (
-            <div
-              className="mb-6 px-4 py-3 rounded-lg text-sm border"
-              style={{ backgroundColor: "rgba(200,90,90,0.1)", borderColor: "rgba(200,90,90,0.25)", color: "#e08080" }}
-            >
+            <div className="mb-6 px-4 py-3 rounded-lg text-sm bg-red-50 border border-red-100 text-red-600">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSignup} className="space-y-5">
             <div>
-              <label className="block text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: "#a89478" }}>
+              <label className="block text-xs font-semibold tracking-widest uppercase mb-2 text-earth">
                 Full Name
               </label>
               <input
@@ -95,7 +97,7 @@ function Signup() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: "#a89478" }}>
+              <label className="block text-xs font-semibold tracking-widest uppercase mb-2 text-earth">
                 Email Address
               </label>
               <input
@@ -109,7 +111,7 @@ function Signup() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: "#a89478" }}>
+              <label className="block text-xs font-semibold tracking-widest uppercase mb-2 text-earth">
                 Password
               </label>
               <input
@@ -125,30 +127,26 @@ function Signup() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 font-semibold rounded-lg transition-all duration-200 active:scale-95 mt-2"
-              style={{ backgroundColor: "#e09040", color: "#0f0d0b" }}
-              onMouseEnter={e => !loading && (e.currentTarget.style.backgroundColor = "#cc7e2e")}
-              onMouseLeave={e => !loading && (e.currentTarget.style.backgroundColor = "#e09040")}
+              className="btn-primary w-full py-3.5 flex items-center justify-center gap-2 mt-2"
             >
-              {loading ? "Creating account…" : "Create Account"}
+              {loading ? "Creating account…" : (
+                <>Create Account <ArrowRight size={18} /></>
+              )}
             </button>
           </form>
 
-          <p className="mt-8 text-center text-sm" style={{ color: "#5c4e42" }}>
+          <p className="mt-8 text-center lg:text-left text-sm text-forest-muted">
             Already have an account?{" "}
             <Link
               to="/"
-              className="font-semibold transition-colors duration-200"
-              style={{ color: "#e09040" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "#cc7e2e")}
-              onMouseLeave={e => (e.currentTarget.style.color = "#e09040")}
+              className="font-medium text-sage-600 hover:text-sage-700 transition-colors duration-200"
             >
               Sign in
             </Link>
           </p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

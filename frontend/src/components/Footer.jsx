@@ -1,32 +1,30 @@
 import { Link } from "react-router-dom";
+import { UtensilsCrossed } from "lucide-react";
 
 function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer
-      className="border-t"
-      style={{ backgroundColor: "#0f0d0b", borderColor: "#2a2320" }}
-    >
-      {/* Top accent */}
-      <div className="h-px w-full" style={{ background: "linear-gradient(90deg, transparent 0%, #e09040 50%, transparent 100%)", opacity: 0.35 }} />
-
+    <footer className="border-t border-sand-200 bg-sand">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
 
           {/* Brand */}
           <div>
-            <p className="font-display text-lg font-bold mb-3" style={{ color: "#e09040" }}>
-              Hxzard's Restaurant
-            </p>
-            <p className="text-sm leading-relaxed" style={{ color: "#5c4e42" }}>
-              Crafted flavours, delivered fresh. Restaurant-quality meals made to order.
+            <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold tracking-wide text-forest mb-3">
+              <span className="w-8 h-8 rounded-full bg-sage-200 flex items-center justify-center text-sage-700">
+                 <UtensilsCrossed size={18} />
+              </span>
+              Hxzard's
+            </Link>
+            <p className="text-sm leading-relaxed text-forest-muted">
+              Crafted flavours, delivered fresh. Restaurant-quality meals made to order with organic, fresh ingredients.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: "#a89478" }}>
+            <p className="text-xs font-semibold tracking-widest uppercase mb-4 text-earth">
               Navigate
             </p>
             <ul className="space-y-2.5">
@@ -34,10 +32,7 @@ function Footer() {
                 <li key={label}>
                   <Link
                     to={to}
-                    className="text-sm transition-colors duration-200"
-                    style={{ color: "#5c4e42" }}
-                    onMouseEnter={e => (e.currentTarget.style.color = "#e09040")}
-                    onMouseLeave={e => (e.currentTarget.style.color = "#5c4e42")}
+                    className="text-sm transition-colors duration-200 text-forest-muted hover:text-sage-600"
                   >
                     {label}
                   </Link>
@@ -48,7 +43,7 @@ function Footer() {
 
           {/* Support */}
           <div>
-            <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: "#a89478" }}>
+            <p className="text-xs font-semibold tracking-widest uppercase mb-4 text-earth">
               Support
             </p>
             <ul className="space-y-2.5">
@@ -56,10 +51,7 @@ function Footer() {
                 <li key={item}>
                   <a
                     href="#"
-                    className="text-sm transition-colors duration-200"
-                    style={{ color: "#5c4e42" }}
-                    onMouseEnter={e => (e.currentTarget.style.color = "#e09040")}
-                    onMouseLeave={e => (e.currentTarget.style.color = "#5c4e42")}
+                    className="text-sm transition-colors duration-200 text-forest-muted hover:text-sage-600"
                   >
                     {item}
                   </a>
@@ -70,10 +62,10 @@ function Footer() {
 
           {/* Contact */}
           <div>
-            <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: "#a89478" }}>
+            <p className="text-xs font-semibold tracking-widest uppercase mb-4 text-earth">
               Get in Touch
             </p>
-            <div className="space-y-2.5 text-sm" style={{ color: "#5c4e42" }}>
+            <div className="space-y-2.5 text-sm text-forest-muted">
               <p>support@hxzards.com</p>
               <p>+1 (555) 123-4567</p>
               <p>10 AM – 10 PM daily</p>
@@ -82,18 +74,16 @@ function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderColor: "#2a2320" }}>
-          <p className="text-xs" style={{ color: "#5c4e42" }}>
+        <div className="pt-8 border-t border-sand-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-forest-muted">
             © {year} Hxzard's Restaurant. All rights reserved.
           </p>
-          <div className="flex gap-6 text-xs" style={{ color: "#5c4e42" }}>
+          <div className="flex gap-6 text-xs text-forest-muted">
             {["Privacy Policy", "Terms of Service"].map((item) => (
               <a
                 key={item}
                 href="#"
-                className="transition-colors duration-200"
-                onMouseEnter={e => (e.currentTarget.style.color = "#e09040")}
-                onMouseLeave={e => (e.currentTarget.style.color = "#5c4e42")}
+                className="transition-colors duration-200 hover:text-sage-600"
               >
                 {item}
               </a>

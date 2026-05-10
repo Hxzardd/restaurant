@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import { AnimatePresence } from "framer-motion";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -24,16 +25,18 @@ function AppContent() {
       {showChrome && <Navbar />}
 
       <main className="flex-1">
-        <Routes>
-          <Route path="/"           element={<Login />} />
-          <Route path="/signup"     element={<Signup />} />
-          <Route path="/menu"       element={user ? <Menu />        : <Navigate to="/" replace />} />
-          <Route path="/cart"       element={user ? <Cart />        : <Navigate to="/" replace />} />
-          <Route path="/orders"     element={user ? <Orders />      : <Navigate to="/" replace />} />
-          <Route path="/admin/orders" element={user ? <AdminOrders /> : <Navigate to="/" replace />} />
-          <Route path="/admin/menu"   element={user ? <AdminMenu />   : <Navigate to="/" replace />} />
-          <Route path="*"           element={<Navigate to="/" replace />} />
-        </Routes>
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/"           element={<Login />} />
+            <Route path="/signup"     element={<Signup />} />
+            <Route path="/menu"       element={user ? <Menu />        : <Navigate to="/" replace />} />
+            <Route path="/cart"       element={user ? <Cart />        : <Navigate to="/" replace />} />
+            <Route path="/orders"     element={user ? <Orders />      : <Navigate to="/" replace />} />
+            <Route path="/admin/orders" element={user ? <AdminOrders /> : <Navigate to="/" replace />} />
+            <Route path="/admin/menu"   element={user ? <AdminMenu />   : <Navigate to="/" replace />} />
+            <Route path="*"           element={<Navigate to="/" replace />} />
+          </Routes>
+        </AnimatePresence>
       </main>
 
       {showChrome && <Footer />}

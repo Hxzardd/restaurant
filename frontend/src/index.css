@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
 @layer base {
   *, *::before, *::after {
     box-sizing: border-box;
@@ -12,29 +14,19 @@
   }
 
   body {
-    @apply bg-night text-cream font-body antialiased;
-    background-color: #0f0d0b;
+    @apply bg-sand text-forest font-body antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display;
-    color: #f2ece0;
+    @apply font-display text-forest;
   }
 
   input, select, textarea {
-    @apply font-body;
-    background-color: #1d1915;
-    color: #f2ece0;
-    border-color: #38302a;
+    @apply font-body bg-white text-forest border-sand-300;
   }
 
   input::placeholder, textarea::placeholder {
-    color: #5c4e42;
-  }
-
-  option {
-    background-color: #1d1915;
-    color: #f2ece0;
+    @apply text-forest-muted;
   }
 
   button:disabled {
@@ -42,146 +34,44 @@
   }
 
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
-  ::-webkit-scrollbar-track { background: #151210; }
-  ::-webkit-scrollbar-thumb { background: #38302a; border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: #e09040; }
+  ::-webkit-scrollbar-track { background: #f9f8f5; }
+  ::-webkit-scrollbar-thumb { background: #d5c9b6; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #b09b7d; }
 }
 
 @layer components {
   .input-field {
-    @apply w-full px-4 py-3 rounded-lg border text-base transition-all duration-200;
-    background-color: #1d1915;
-    color: #f2ece0;
-    border-color: #38302a;
+    @apply w-full px-4 py-3 rounded-lg border bg-white text-base transition-all duration-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sage-400 focus:border-transparent;
   }
-  .input-field:focus {
-    outline: none;
-    border-color: #e09040;
-    box-shadow: 0 0 0 3px rgba(224,144,64,0.15);
-  }
-  .input-field::placeholder { color: #5c4e42; }
-
+  
   .btn-primary {
-    @apply font-semibold rounded-lg transition-all duration-200 active:scale-95;
-    background-color: #e09040;
-    color: #0f0d0b;
-  }
-  .btn-primary:hover {
-    background-color: #cc7e2e;
-    box-shadow: 0 4px 24px rgba(224,144,64,0.3);
+    @apply font-medium rounded-lg transition-all duration-300 bg-sage-500 text-white hover:bg-sage-600 shadow-soft hover:shadow-float active:scale-95;
   }
 
   .btn-secondary {
-    @apply font-semibold rounded-lg border transition-all duration-200 active:scale-95;
-    background-color: transparent;
-    color: #a89478;
-    border-color: #38302a;
-  }
-  .btn-secondary:hover {
-    border-color: #e09040;
-    color: #e09040;
+    @apply font-medium rounded-lg border border-sage-200 bg-white text-sage-600 transition-all duration-300 hover:bg-sage-50 hover:border-sage-300 active:scale-95;
   }
 
   .card {
-    @apply rounded-xl border transition-all duration-300;
-    background-color: #1d1915;
-    border-color: #38302a;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+    @apply rounded-2xl bg-white border border-sand-200 shadow-soft transition-all duration-300 hover:shadow-float;
   }
 
-  .card-hover {
-    @apply card;
-  }
-  .card-hover:hover {
-    border-color: #e09040;
-    box-shadow: 0 8px 40px rgba(224,144,64,0.22);
-    transform: translateY(-3px);
-  }
-
-  .status-badge {
-    @apply px-3 py-1 rounded-full text-xs font-semibold tracking-wide;
-  }
-
-  .section-title {
-    @apply font-display text-4xl font-bold tracking-tight;
-    color: #f2ece0;
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-glass;
   }
 
   .skeleton {
-    border-radius: 6px;
+    @apply bg-sand-200 rounded animate-shimmer;
     background: linear-gradient(
       90deg,
-      #1d1915 0%,
-      #252019 50%,
-      #1d1915 100%
+      #f1eee7 0%,
+      #e5dfd3 50%,
+      #f1eee7 100%
     );
     background-size: 200% 100%;
-    animation: shimmer 1.6s ease-in-out infinite;
   }
 }
 
-@layer utilities {
-  /* Gradient text utility */
-  .text-ember-gradient {
-    background: linear-gradient(135deg, #e09040 0%, #f5b870 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  /* Subtle noise grain overlay */
-  .grain {
-    position: relative;
-  }
-  .grain::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.025;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  /* Page animations */
-  .page-fade-in  { animation: pageIn 0.45s ease-out both; }
-  .float-up      { animation: floatUp 0.55s ease-out both; }
-  .scale-in      { animation: scaleIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
-  .badge-pop     { animation: badgePop 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
-  .pulse-subtle  { animation: pulseWarm 2s cubic-bezier(0.4,0,0.6,1) infinite; }
-
-  @keyframes pageIn {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes floatUp {
-    from { opacity: 0; transform: translateY(22px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.92); }
-    to   { opacity: 1; transform: scale(1); }
-  }
-  @keyframes badgePop {
-    0%   { opacity: 0; transform: scale(0) rotate(-180deg); }
-    50%  { transform: scale(1.2) rotate(5deg); }
-    100% { opacity: 1; transform: scale(1) rotate(0); }
-  }
-  @keyframes pulseWarm {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.55; }
-  }
-  @keyframes shimmer {
-    0%   { background-position: -200% 0; }
-    100% { background-position:  200% 0; }
-  }
-
-  /* Stagger helpers */
-  .delay-100 { animation-delay: 0.1s; }
-  .delay-200 { animation-delay: 0.2s; }
-  .delay-300 { animation-delay: 0.3s; }
-  .delay-400 { animation-delay: 0.4s; }
-}
