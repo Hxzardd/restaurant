@@ -1,8 +1,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { UtensilsCrossed, ArrowRight } from "lucide-react";
+import { Flame, ArrowRight } from "lucide-react";
 
 function Login() {
   const [email, setEmail]       = useState("");
@@ -28,64 +27,34 @@ function Login() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="min-h-screen flex bg-sand"
-    >
-      {/* Left side: Image */}
-      <div className="hidden lg:block lg:w-1/2 relative overflow-hidden">
-        <div className="absolute inset-0 bg-sage-900/20 z-10" />
-        <img
-          src="https://images.unsplash.com/photo-1481931098730-318b6f776db0?auto=format&fit=crop&w=1200&q=80"
-          alt="Delicious food"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 z-20 flex flex-col justify-end p-12 text-white">
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <h2 className="font-display text-5xl font-bold mb-4">Taste the difference.</h2>
-            <p className="text-lg opacity-90 max-w-md">Experience fresh, organic, and beautifully crafted meals delivered right to your door.</p>
-          </motion.div>
-        </div>
-      </div>
+    <div className="min-h-screen flex items-center justify-center px-4 py-16 bg-cream">
+      <div className="w-full max-w-md animate-fade-up">
+        {/* Brand */}
+        <Link to="/" className="inline-flex items-center gap-2 font-display text-xl font-extrabold tracking-tight text-ink mb-10">
+          <span className="w-8 h-8 rounded-full bg-paprika flex items-center justify-center text-white">
+            <Flame size={16} aria-hidden="true" />
+          </span>
+          Hxzard&rsquo;s
+        </Link>
 
-      {/* Right side: Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 bg-white">
-        <div className="w-full max-w-md">
-          {/* Header */}
-          <div className="mb-10 text-center lg:text-left">
-            <Link to="/" className="inline-flex items-center gap-2 font-display text-xl font-bold tracking-wide text-forest mb-8">
-              <span className="w-8 h-8 rounded-full bg-sage-100 flex items-center justify-center text-sage-600">
-                 <UtensilsCrossed size={18} />
-              </span>
-              Hxzard's
-            </Link>
-            <h1 className="font-display text-4xl font-bold mb-3 text-forest">
-              Welcome Back
-            </h1>
-            <p className="text-forest-muted">
-              Sign in to continue ordering your favorite meals.
-            </p>
-          </div>
+        <div className="card p-8 sm:p-10">
+          <span className="eyebrow mb-2">Welcome back</span>
+          <h1 className="font-display text-3xl font-extrabold tracking-tight mb-2">Sign in</h1>
+          <p className="text-sm text-ink-soft mb-8">
+            Pick up where you left off — your cart is waiting.
+          </p>
 
-          {error && (
-            <div className="mb-6 px-4 py-3 rounded-lg text-sm bg-red-50 border border-red-100 text-red-600">
-              {error}
-            </div>
-          )}
+          {error && <div className="error-banner mb-6">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-semibold tracking-widest uppercase mb-2 text-earth">
+              <label htmlFor="email" className="block text-xs font-bold tracking-widest uppercase mb-2 text-ink-soft">
                 Email Address
               </label>
               <input
+                id="email"
                 type="email"
+                autoComplete="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -95,11 +64,13 @@ function Login() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold tracking-widest uppercase mb-2 text-earth">
+              <label htmlFor="password" className="block text-xs font-bold tracking-widest uppercase mb-2 text-ink-soft">
                 Password
               </label>
               <input
+                id="password"
                 type="password"
+                autoComplete="current-password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -108,29 +79,26 @@ function Login() {
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full py-3.5 flex items-center justify-center gap-2 mt-2"
-            >
-              {loading ? "Signing in…" : (
-                <>Sign In <ArrowRight size={18} /></>
-              )}
+            <button type="submit" disabled={loading} className="btn-primary w-full py-3.5 mt-2">
+              {loading ? "Signing in…" : (<>Sign In <ArrowRight size={18} aria-hidden="true" /></>)}
             </button>
           </form>
 
-          <p className="mt-8 text-center lg:text-left text-sm text-forest-muted">
-            Don't have an account yet?{" "}
-            <Link
-              to="/signup"
-              className="font-medium text-sage-600 hover:text-sage-700 transition-colors duration-200"
-            >
-              Create one
+          <p className="mt-8 text-center text-sm text-ink-soft">
+            New here?{" "}
+            <Link to="/signup" className="font-semibold text-paprika hover:text-paprika-600 transition-colors duration-200">
+              Create an account
             </Link>
           </p>
         </div>
+
+        <p className="mt-6 text-center text-sm">
+          <Link to="/menu" className="text-ink-soft hover:text-ink transition-colors duration-200">
+            ← Just browsing? See the menu
+          </Link>
+        </p>
       </div>
-    </motion.div>
+    </div>
   );
 }
 

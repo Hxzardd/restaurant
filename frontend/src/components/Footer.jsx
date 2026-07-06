@@ -1,94 +1,40 @@
 import { Link } from "react-router-dom";
-import { UtensilsCrossed } from "lucide-react";
+import { Flame } from "lucide-react";
 
 function Footer() {
-  const year = new Date().getFullYear();
-
   return (
-    <footer className="border-t border-sand-200 bg-sand">
+    <footer className="bg-ink text-cream mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
-
-          {/* Brand */}
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-8">
           <div>
-            <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold tracking-wide text-forest mb-3">
-              <span className="w-8 h-8 rounded-full bg-sage-200 flex items-center justify-center text-sage-700">
-                 <UtensilsCrossed size={18} />
+            <Link to="/" className="flex items-center gap-2 font-display text-xl font-extrabold tracking-tight mb-3 text-cream hover:opacity-80 transition-opacity duration-200">
+              <span className="w-8 h-8 rounded-full bg-paprika flex items-center justify-center text-white">
+                <Flame size={16} aria-hidden="true" />
               </span>
-              Hxzard's
+              Hxzard&rsquo;s
             </Link>
-            <p className="text-sm leading-relaxed text-forest-muted">
-              Crafted flavours, delivered fresh. Restaurant-quality meals made to order with organic, fresh ingredients.
+            <p className="text-sm text-cream/60 max-w-xs">
+              Fresh food, ordered in seconds. From our kitchen to your doorstep.
             </p>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <p className="text-xs font-semibold tracking-widest uppercase mb-4 text-earth">
-              Navigate
-            </p>
-            <ul className="space-y-2.5">
-              {[{ label: "Menu", to: "/menu" }, { label: "Cart", to: "/cart" }, { label: "Orders", to: "/orders" }].map(({ label, to }) => (
-                <li key={label}>
-                  <Link
-                    to={to}
-                    className="text-sm transition-colors duration-200 text-forest-muted hover:text-sage-600"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <p className="text-xs font-semibold tracking-widest uppercase mb-4 text-earth">
-              Support
-            </p>
-            <ul className="space-y-2.5">
-              {["Contact Us", "FAQ", "Delivery Info", "Feedback"].map((item) => (
-                <li key={item}>
-                  <a
-                    href="#"
-                    className="text-sm transition-colors duration-200 text-forest-muted hover:text-sage-600"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <p className="text-xs font-semibold tracking-widest uppercase mb-4 text-earth">
-              Get in Touch
-            </p>
-            <div className="space-y-2.5 text-sm text-forest-muted">
-              <p>support@hxzards.com</p>
-              <p>+1 (555) 123-4567</p>
-              <p>10 AM – 10 PM daily</p>
+          <nav className="flex gap-12" aria-label="Footer">
+            <div className="flex flex-col gap-2">
+              <p className="text-xs font-bold uppercase tracking-widest text-cream/40 mb-1">Explore</p>
+              <Link to="/menu" className="text-sm text-cream/70 hover:text-cream transition-colors duration-200">Menu</Link>
+              <Link to="/cart" className="text-sm text-cream/70 hover:text-cream transition-colors duration-200">Cart</Link>
+              <Link to="/orders" className="text-sm text-cream/70 hover:text-cream transition-colors duration-200">My Orders</Link>
             </div>
-          </div>
+            <div className="flex flex-col gap-2">
+              <p className="text-xs font-bold uppercase tracking-widest text-cream/40 mb-1">Account</p>
+              <Link to="/login" className="text-sm text-cream/70 hover:text-cream transition-colors duration-200">Sign in</Link>
+              <Link to="/signup" className="text-sm text-cream/70 hover:text-cream transition-colors duration-200">Create account</Link>
+            </div>
+          </nav>
         </div>
 
-        {/* Bottom bar */}
-        <div className="pt-8 border-t border-sand-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-forest-muted">
-            © {year} Hxzard's Restaurant. All rights reserved.
-          </p>
-          <div className="flex gap-6 text-xs text-forest-muted">
-            {["Privacy Policy", "Terms of Service"].map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="transition-colors duration-200 hover:text-sage-600"
-              >
-                {item}
-              </a>
-            ))}
-          </div>
+        <div className="mt-10 pt-6 border-t border-cream/10 text-xs text-cream/40">
+          Built with React, Flask &amp; PostgreSQL — a full-stack ordering system.
         </div>
       </div>
     </footer>

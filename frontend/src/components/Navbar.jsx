@@ -1,122 +1,144 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { CartContext } from "../context/CartContext";
-import { ShoppingBag, LogOut, LayoutDashboard, UtensilsCrossed, ReceiptText } from "lucide-react";
-import { motion } from "framer-motion";
-import clsx from "clsx";
-import { twMerge } from "tailwind-merge";
+import { ShoppingBag, LogOut, Menu as MenuIcon, X, Flame } from "lucide-react";
+
+function NavItem({ to, children, onClick }) {
+  return (
+    <NavLink
+      to={to}
+      onClick={onClick}
+      className={({ isActive }) =>
+        `px-3 py-2 text-sm font-semibold rounded-full transition-colors duration-200 ${
+          isActive ? "text-paprika" : "text-ink-soft hover:text-ink"
+        }`
+      }
+    >
+      {children}
+    </NavLink>
+  );
+}
 
 function Navbar() {
   const { user, logout } = useContext(AuthContext);
   const { cart } = useContext(CartContext);
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleLogout = () => {
+    setOpen(false);
     logout();
     navigate("/");
   };
 
-  const isActive = (path) => location.pathname === path;
-
-  const NavLink = ({ to, icon: Icon, children }) => (
-    <Link
-      to={to}
-      className={twMerge(
-        clsx(
-          "relative flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-200 rounded-md",
-          isActive(to)
-            ? "text-sage-700"
-            : "text-forest-muted hover:text-sage-600"
-        )
-      )}
-    >
-      {Icon && <Icon size={16} />}
-      {children}
-      {isActive(to) && (
-        <motion.div
-          layoutId="navbar-indicator"
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-sage-500 rounded-full"
-          initial={false}
-          transition={{ type: "spring", stiffness: 500, damping: 30 }}
-        />
-      )}
-    </Link>
-  );
+  const close = () => setOpen(false);
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className="sticky top-0 z-50 border-b border-sand-200 glass-panel"
-    >
+    <nav className="sticky top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-linen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
           {/* Brand */}
           <Link
-            to="/menu"
-            className="flex items-center gap-2 font-display text-xl font-bold tracking-wide transition-opacity duration-200 hover:opacity-80 text-forest"
+            to="/"
+            onClick={close}
+            className="flex items-center gap-2 font-display text-xl font-extrabold tracking-tight text-ink hover:opacity-80 transition-opacity duration-200"
           >
-            <span className="w-8 h-8 rounded-full bg-sage-100 flex items-center justify-center text-sage-600">
-               <UtensilsCrossed size={18} />
+            <span className="w-8 h-8 rounded-full bg-paprika flex items-center justify-center text-white">
+              <Flame size={16} aria-hidden="true" />
             </span>
-            Hxzard's
+            Hxzard&rsquo;s
           </Link>
 
-          {/* Nav links */}
-          <div className="hidden sm:flex items-center gap-2">
-            <NavLink to="/menu">Menu</NavLink>
-            <NavLink to="/cart" icon={ShoppingBag}>
-              Cart
-              {cartCount > 0 && (
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute -top-1 -right-2 w-4 h-4 text-[10px] font-bold rounded-full flex items-center justify-center bg-sage-500 text-white"
-                >
-                  {cartCount}
-                </motion.span>
-              )}
-            </NavLink>
-            {user && <NavLink to="/orders" icon={ReceiptText}>Orders</NavLink>}
-
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-1">
+            <NavItem to="/menu">Menu</NavItem>
+            {user && <NavItem to="/orders">My Orders</NavItem>}
             {user?.isAdmin && (
               <>
-                <div className="w-px h-4 mx-2 bg-sand-300" />
-                <NavLink to="/admin/orders" icon={LayoutDashboard}>
-                  Admin Orders
-                </NavLink>
-                <NavLink to="/admin/menu" icon={LayoutDashboard}>
-                  Admin Menu
-                </NavLink>
+                <span className="w-px h-4 mx-1 bg-linen" aria-hidden="true" />
+                <NavItem to="/admin/menu">Admin Menu</NavItem>
+                <NavItem to="/admin/orders">Admin Orders</NavItem>
+                <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-ink text-cream">
+                  Admin
+                </span>
               </>
             )}
           </div>
 
-          {/* Auth action */}
-          {user ? (
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg text-forest-muted hover:text-red-600 hover:bg-red-50 transition-colors duration-200 active:scale-95"
-            >
-              <LogOut size={16} />
-              <span className="hidden sm:inline">Log out</span>
-            </button>
-          ) : (
+          {/* Right actions */}
+          <div className="flex items-center gap-2">
             <Link
-              to="/login"
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg text-forest-muted hover:text-sage-600 transition-colors duration-200"
+              to="/cart"
+              onClick={close}
+              aria-label={`Cart, ${cartCount} item${cartCount === 1 ? "" : "s"}`}
+              className="relative p-2.5 rounded-full text-ink hover:bg-cream-dark transition-colors duration-200"
             >
-              Sign in
+              <ShoppingBag size={20} aria-hidden="true" />
+              {cartCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full flex items-center justify-center bg-paprika text-white">
+                  {cartCount}
+                </span>
+              )}
             </Link>
-          )}
+
+            <Link to="/menu" onClick={close} className="hidden sm:inline-flex btn-primary px-5 py-2.5 text-sm">
+              Order Now
+            </Link>
+
+            {user ? (
+              <button
+                onClick={handleLogout}
+                aria-label="Log out"
+                className="hidden md:flex btn-ghost px-3 py-2.5 text-sm"
+              >
+                <LogOut size={16} aria-hidden="true" />
+                <span className="hidden lg:inline">Log out</span>
+              </button>
+            ) : (
+              <Link to="/login" className="hidden md:inline-flex btn-ghost px-4 py-2.5 text-sm">
+                Sign in
+              </Link>
+            )}
+
+            {/* Mobile toggle */}
+            <button
+              onClick={() => setOpen(!open)}
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              className="md:hidden p-2.5 rounded-full text-ink hover:bg-cream-dark transition-colors duration-200"
+            >
+              {open ? <X size={20} aria-hidden="true" /> : <MenuIcon size={20} aria-hidden="true" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile menu */}
+        {open && (
+          <div className="md:hidden pb-4 flex flex-col gap-1 border-t border-linen pt-3">
+            <NavItem to="/menu" onClick={close}>Menu</NavItem>
+            <NavItem to="/cart" onClick={close}>Cart {cartCount > 0 && `(${cartCount})`}</NavItem>
+            {user && <NavItem to="/orders" onClick={close}>My Orders</NavItem>}
+            {user?.isAdmin && (
+              <>
+                <NavItem to="/admin/menu" onClick={close}>Admin Menu</NavItem>
+                <NavItem to="/admin/orders" onClick={close}>Admin Orders</NavItem>
+              </>
+            )}
+            {user ? (
+              <button onClick={handleLogout} className="btn-ghost px-3 py-2 text-sm justify-start">
+                <LogOut size={16} aria-hidden="true" /> Log out
+              </button>
+            ) : (
+              <NavItem to="/login" onClick={close}>Sign in</NavItem>
+            )}
+          </div>
+        )}
       </div>
-    </motion.nav>
+    </nav>
   );
 }
 

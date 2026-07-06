@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
-
 @layer base {
   *, *::before, *::after {
     box-sizing: border-box;
@@ -14,64 +12,96 @@
   }
 
   body {
-    @apply bg-sand text-forest font-body antialiased;
+    @apply bg-cream text-ink font-body antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display text-forest;
+    @apply font-display text-ink;
   }
 
   input, select, textarea {
-    @apply font-body bg-white text-forest border-sand-300;
+    @apply font-body bg-white text-ink;
   }
 
   input::placeholder, textarea::placeholder {
-    @apply text-forest-muted;
+    @apply text-ink-soft/60;
   }
 
   button:disabled {
     @apply cursor-not-allowed opacity-50;
   }
 
+  /* Keyboard-visible focus everywhere */
+  a:focus-visible, button:focus-visible, input:focus-visible,
+  select:focus-visible, textarea:focus-visible {
+    @apply outline-none ring-2 ring-paprika ring-offset-2 ring-offset-cream;
+  }
+
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
-  ::-webkit-scrollbar-track { background: #f9f8f5; }
-  ::-webkit-scrollbar-thumb { background: #d5c9b6; border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: #b09b7d; }
+  ::-webkit-scrollbar-track { background: #faf5ee; }
+  ::-webkit-scrollbar-thumb { background: #e8dfd2; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #d5c7b2; }
 }
 
 @layer components {
   .input-field {
-    @apply w-full px-4 py-3 rounded-lg border bg-white text-base transition-all duration-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sage-400 focus:border-transparent;
+    @apply w-full px-4 py-3 rounded-xl border border-linen bg-white text-base transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-paprika/60 focus:border-transparent;
   }
-  
+
+  /* Button variants — primary (order/action), secondary (browse), ghost (nav), danger (destructive) */
   .btn-primary {
-    @apply font-medium rounded-lg transition-all duration-300 bg-sage-500 text-white hover:bg-sage-600 shadow-soft hover:shadow-float active:scale-95;
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-full bg-paprika text-white transition-all duration-200 hover:bg-paprika-600 active:scale-[0.98] shadow-card hover:shadow-lift;
   }
 
   .btn-secondary {
-    @apply font-medium rounded-lg border border-sage-200 bg-white text-sage-600 transition-all duration-300 hover:bg-sage-50 hover:border-sage-300 active:scale-95;
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-full border-2 border-ink bg-transparent text-ink transition-colors duration-200 hover:bg-ink hover:text-cream active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 font-medium rounded-full text-ink-soft transition-colors duration-200 hover:text-ink hover:bg-cream-dark;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-full border border-red-200 bg-red-50 text-red-700 transition-colors duration-200 hover:bg-red-100 active:scale-[0.98];
   }
 
   .card {
-    @apply rounded-2xl bg-white border border-sand-200 shadow-soft transition-all duration-300 hover:shadow-float;
+    @apply rounded-2xl bg-white border border-linen shadow-card transition-shadow duration-200;
   }
 
-  .glass-panel {
-    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-glass;
+  .card-hover {
+    @apply hover:shadow-lift hover:-translate-y-0.5 transition-all duration-200;
+  }
+
+  /* Filter chips (category selection) */
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border transition-colors duration-200 border-linen bg-white text-ink-soft hover:border-ink hover:text-ink;
+  }
+
+  .chip-active {
+    @apply border-ink bg-ink text-cream hover:text-cream;
+  }
+
+  /* Section eyebrow label */
+  .eyebrow {
+    @apply inline-block text-xs font-bold tracking-[0.2em] uppercase text-paprika;
+  }
+
+  .error-banner {
+    @apply rounded-xl bg-red-50 border border-red-100 px-5 py-4 text-sm text-red-700;
   }
 
   .skeleton {
-    @apply bg-sand-200 rounded animate-shimmer;
+    @apply rounded animate-shimmer;
     background: linear-gradient(
       90deg,
-      #f1eee7 0%,
-      #e5dfd3 50%,
-      #f1eee7 100%
+      #f1e9dd 0%,
+      #e8dfd2 50%,
+      #f1e9dd 100%
     );
     background-size: 200% 100%;
   }
 }
-
