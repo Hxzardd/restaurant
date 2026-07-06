@@ -19,7 +19,7 @@ function Signup() {
     try {
       const res = await api.post("/auth/register", { name, email, password });
       if (res.status >= 200 && res.status < 300) {
-        navigate("/");
+        navigate("/login");
       } else {
         setError(res.data?.msg || "Signup failed");
       }
@@ -138,7 +138,7 @@ function Signup() {
           <p className="mt-8 text-center lg:text-left text-sm text-forest-muted">
             Already have an account?{" "}
             <Link
-              to="/"
+              to="/login"
               className="font-medium text-sage-600 hover:text-sage-700 transition-colors duration-200"
             >
               Sign in

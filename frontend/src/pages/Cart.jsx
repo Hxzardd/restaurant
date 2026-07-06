@@ -1,19 +1,26 @@
 import { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
+import { AuthContext } from "../context/AuthContext";
 import api from "../api/axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trash2, Plus, Minus, ArrowRight } from "lucide-react";
 
 function Cart() {
   const { cart, addToCart, decreaseQuantity, removeFromCart, clearCart } = useContext(CartContext);
+  const { user } = useContext(AuthContext);
   const [error, setError]     = useState("");
   const [loading, setLoading] = useState(false);
   const navigate              = useNavigate();
+  const location              = useLocation();
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const placeOrder = async () => {
+    if (!user) {
+      navigate("/login", { state: { from: location } });
+      return;
+    }
     try {
       setLoading(true);
       setError("");

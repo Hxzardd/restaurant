@@ -1,10 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "./context/AuthContext";
-import { AnimatePresence } from "framer-motion";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import AdminRoute from "./routes/AdminRoute";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Menu from "./pages/Menu";
@@ -14,32 +13,29 @@ import AdminOrders from "./pages/AdminOrders";
 import AdminMenu from "./pages/AdminMenu";
 
 function AppContent() {
-  const { user } = useContext(AuthContext);
   const location = useLocation();
 
-  const isAuthPage = location.pathname === "/" || location.pathname === "/signup";
-  const showChrome = user && !isAuthPage;
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
 
   return (
     <div className="flex flex-col min-h-screen">
-      {showChrome && <Navbar />}
+      {!isAuthPage && <Navbar />}
 
       <main className="flex-1">
-        <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
-            <Route path="/"           element={<Login />} />
-            <Route path="/signup"     element={<Signup />} />
-            <Route path="/menu"       element={user ? <Menu />        : <Navigate to="/" replace />} />
-            <Route path="/cart"       element={user ? <Cart />        : <Navigate to="/" replace />} />
-            <Route path="/orders"     element={user ? <Orders />      : <Navigate to="/" replace />} />
-            <Route path="/admin/orders" element={user ? <AdminOrders /> : <Navigate to="/" replace />} />
-            <Route path="/admin/menu"   element={user ? <AdminMenu />   : <Navigate to="/" replace />} />
-            <Route path="*"           element={<Navigate to="/" replace />} />
-          </Routes>
-        </AnimatePresence>
+        <Routes>
+          <Route path="/" element={<Navigate to="/menu" replace />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+          <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+          <Route path="/admin/menu" element={<AdminRoute><AdminMenu /></AdminRoute>} />
+          <Route path="*" element={<Navigate to="/menu" replace />} />
+        </Routes>
       </main>
 
-      {showChrome && <Footer />}
+      {!isAuthPage && <Footer />}
     </div>
   );
 }

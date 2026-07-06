@@ -1,9 +1,22 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const CartContext = createContext();
 
+function loadCart() {
+  try {
+    return JSON.parse(localStorage.getItem("cart")) || [];
+  } catch {
+    return [];
+  }
+}
+
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(loadCart);
+
+  // Persist so the cart survives a page refresh
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   const addToCart = (item) => {
     setCart((prev) => {

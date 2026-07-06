@@ -22,7 +22,10 @@ export function AuthProvider({ children }) {
     const token = localStorage.getItem("token");
     if (token) {
       const payload = parseJwt(token);
-      if (payload) {
+      // Drop expired tokens instead of restoring a session that will only 401
+      if (payload?.exp && payload.exp * 1000 < Date.now()) {
+        localStorage.removeItem("token");
+      } else if (payload) {
         setUser({
           token,
           isAdmin: payload.is_admin === true,

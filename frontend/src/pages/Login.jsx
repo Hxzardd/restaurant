@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { UtensilsCrossed, ArrowRight } from "lucide-react";
 
@@ -11,6 +11,7 @@ function Login() {
   const [loading, setLoading]   = useState(false);
   const { login }               = useContext(AuthContext);
   const navigate                = useNavigate();
+  const location                = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,7 +19,7 @@ function Login() {
     setLoading(true);
     try {
       await login(email, password);
-      navigate("/menu");
+      navigate(location.state?.from?.pathname || "/menu");
     } catch {
       setError("Invalid email or password. Please try again.");
     } finally {

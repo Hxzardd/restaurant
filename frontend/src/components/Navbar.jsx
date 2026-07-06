@@ -82,7 +82,7 @@ function Navbar() {
                 </motion.span>
               )}
             </NavLink>
-            <NavLink to="/orders" icon={ReceiptText}>Orders</NavLink>
+            {user && <NavLink to="/orders" icon={ReceiptText}>Orders</NavLink>}
 
             {user?.isAdmin && (
               <>
@@ -97,14 +97,23 @@ function Navbar() {
             )}
           </div>
 
-          {/* Logout */}
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg text-forest-muted hover:text-red-600 hover:bg-red-50 transition-colors duration-200 active:scale-95"
-          >
-            <LogOut size={16} />
-            <span className="hidden sm:inline">Log out</span>
-          </button>
+          {/* Auth action */}
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg text-forest-muted hover:text-red-600 hover:bg-red-50 transition-colors duration-200 active:scale-95"
+            >
+              <LogOut size={16} />
+              <span className="hidden sm:inline">Log out</span>
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg text-forest-muted hover:text-sage-600 transition-colors duration-200"
+            >
+              Sign in
+            </Link>
+          )}
         </div>
       </div>
     </motion.nav>
