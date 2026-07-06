@@ -1,20 +1,18 @@
-from flask import Blueprint, request, jsonify, current_app, copy_current_request_context
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-import threading
+from flask import Blueprint, request, jsonify, current_app
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.extensions import db
 from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.menu import MenuItem
-
+from app.utils.auth import admin_required
 from app.utils.email import send_order_ready_email
 
 
 orders = Blueprint("orders", __name__, url_prefix="/orders")
 
-def is_admin():
-    claims = get_jwt()
-    return claims.get("is_admin") is True
+VALID_STATUSES = ["Pending", "Preparing", "Ready", "Delivered", "Cancelled"]
+
 
 @orders.route("", methods=["POST"])
 @jwt_required()
@@ -24,21 +22,27 @@ def place_order():
 
     items = data.get("items")
     if not items or not isinstance(items, list):
-        return jsonify({"msg": "Invalid items"}), 400
+        return jsonify({"msg": "Order must contain at least one item"}), 400
 
     order = Order(user_id=user_id)
     db.session.add(order)
-    db.session.flush()  
+    db.session.flush()
 
     for item in items:
-        menu_item = MenuItem.query.get(item["menu_item_id"])
+        quantity = item.get("quantity") if isinstance(item, dict) else None
+        if not isinstance(quantity, int) or quantity < 1:
+            db.session.rollback()
+            return jsonify({"msg": "Quantity must be a positive integer"}), 400
+
+        menu_item = MenuItem.query.get(item.get("menu_item_id"))
         if not menu_item or not menu_item.is_available:
+            db.session.rollback()
             return jsonify({"msg": "Invalid menu item"}), 400
 
         order_item = OrderItem(
             order_id=order.id,
             menu_item_id=menu_item.id,
-            quantity=item["quantity"],
+            quantity=quantity,
             price=menu_item.price
         )
 
@@ -50,6 +54,7 @@ def place_order():
         "msg": "Order placed successfully",
         "order_id": order.id
     }), 201
+
 
 @orders.route("/my", methods=["GET"])
 @jwt_required()
@@ -76,13 +81,10 @@ def my_orders():
 
     return jsonify(response), 200
 
-# Admin only to view all orders
-@orders.route("/all", methods=["GET"])
-@jwt_required()
-def all_orders():
-    if not is_admin():
-        return jsonify({"msg": "Admin access required"}), 403
 
+@orders.route("/all", methods=["GET"])
+@admin_required
+def all_orders():
     orders = Order.query.all()
 
     response = []
@@ -105,22 +107,18 @@ def all_orders():
     return jsonify(response), 200
 
 
-#Production route to update orders cuz render sucks for sending smtp traffic
 @orders.route("/<int:order_id>/status", methods=["PUT"])
-@jwt_required()
+@admin_required
 def update_order_status(order_id):
-    if not is_admin():
-        return jsonify({"msg": "Admin access required"}), 403
-
     data = request.get_json()
     new_status = data.get("status")
 
-    valid_statuses = ["Pending", "Preparing", "Ready", "Delivered"]
-    if new_status not in valid_statuses:
+    if new_status not in VALID_STATUSES:
         return jsonify({"msg": "Invalid status"}), 400
 
+    order = Order.query.get_or_404(order_id)
+
     try:
-        order = Order.query.get_or_404(order_id)
         order.status = new_status
         db.session.commit()
 
@@ -144,27 +142,3 @@ def update_order_status(order_id):
         db.session.rollback()
         current_app.logger.error(f"Order update failed: {e}")
         return jsonify({"msg": "Failed to update order status"}), 500
-
-# Admin only to update orders (LOCAL TESTING ONLY WHICH WORKS!)
-# @orders.route("/<int:order_id>/status", methods=["PUT"])
-# @jwt_required()
-# def update_order_status_local(order_id):
-#     if not is_admin():
-#         return jsonify({"msg": "Admin access required"}), 403
-
-#     data = request.get_json()
-#     new_status = data.get("status")
-
-#     valid_statuses = ["Pending", "Preparing", "Ready", "Delivered"]
-#     if new_status not in valid_statuses:
-#         return jsonify({"msg": "Invalid status"}), 400
-
-#     order = Order.query.get_or_404(order_id)
-#     order.status = new_status
-#     db.session.commit()
-
-#     if new_status == "Ready" and order.user and order.user.email:
-#         send_order_ready_email(order.user.email, order.id)
-#         print(f"[EMAIL SENT - LOCAL] Order {order.id} → {order.user.email}")
-
-#     return jsonify({"msg": "Order status updated"}), 200

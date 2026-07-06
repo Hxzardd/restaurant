@@ -1,5 +1,6 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
+from werkzeug.exceptions import HTTPException
 from .config import Config
 from .extensions import db, jwt, mail
 
@@ -33,6 +34,16 @@ def create_app():
     app.register_blueprint(auth)
     app.register_blueprint(menu)
     app.register_blueprint(orders)
+
+    # Consistent JSON errors; never leak stack traces to clients.
+    @app.errorhandler(HTTPException)
+    def handle_http_exception(e):
+        return jsonify({"msg": e.description}), e.code
+
+    @app.errorhandler(Exception)
+    def handle_unexpected_error(e):
+        app.logger.exception("Unhandled exception")
+        return jsonify({"msg": "Internal server error"}), 500
 
     with app.app_context():
         db.create_all()

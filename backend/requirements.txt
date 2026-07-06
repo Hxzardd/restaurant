@@ -1,8 +1,8 @@
-flask
-flask-cors
-flask-jwt-extended
-flask-sqlalchemy
-flask-mail
-python-dotenv
-gunicorn
-psycopg2-binary
+flask==3.0.3
+flask-cors==5.0.0
+flask-jwt-extended==4.7.1
+flask-sqlalchemy==3.1.1
+flask-mail==0.10.0
+python-dotenv==1.0.1
+gunicorn==23.0.0
+psycopg2-binary==2.9.10

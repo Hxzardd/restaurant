@@ -1,14 +1,11 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt
 
 from app.extensions import db
 from app.models.menu import MenuItem
+from app.utils.auth import admin_required
+from app.utils.validators import parse_price
 
 menu = Blueprint("menu", __name__, url_prefix="/menu")
-
-def admin_required():
-    claims = get_jwt()
-    return claims.get("is_admin") is True
 
 
 @menu.route("", methods=["GET"])
@@ -27,10 +24,16 @@ def get_menu():
         query = query.filter(MenuItem.category == category)
 
     if min_price:
-        query = query.filter(MenuItem.price >= float(min_price))
+        min_price = parse_price(min_price)
+        if min_price is None:
+            return jsonify({"msg": "Invalid min_price"}), 400
+        query = query.filter(MenuItem.price >= min_price)
 
     if max_price:
-        query = query.filter(MenuItem.price <= float(max_price))
+        max_price = parse_price(max_price)
+        if max_price is None:
+            return jsonify({"msg": "Invalid max_price"}), 400
+        query = query.filter(MenuItem.price <= max_price)
 
     if available is not None:
         query = query.filter(MenuItem.is_available == (available.lower() == "true"))
@@ -52,22 +55,23 @@ def get_menu():
         for item in items
     ]), 200
 
-# Admin only!!
-@menu.route("", methods=["POST"])
-@jwt_required()
-def add_menu_item():
-    if not admin_required():
-        return jsonify({"msg": "Admin access required"}), 403
 
+@menu.route("", methods=["POST"])
+@admin_required
+def add_menu_item():
     data = request.get_json()
 
-    name = data.get("name")
+    name = (data.get("name") or "").strip()
     price = data.get("price")
     category = data.get("category")
     description = data.get("description", "")
 
-    if not all([name, price, category]):
+    if not all([name, price is not None, category]):
         return jsonify({"msg": "Missing required fields"}), 400
+
+    price = parse_price(price)
+    if price is None:
+        return jsonify({"msg": "Price must be a non-negative number"}), 400
 
     item = MenuItem(
         name=name,
@@ -81,18 +85,20 @@ def add_menu_item():
 
     return jsonify({"msg": "Menu item added"}), 201
 
-# Admin only
-@menu.route("/<int:item_id>", methods=["PUT"])
-@jwt_required()
-def update_menu_item(item_id):
-    if not admin_required():
-        return jsonify({"msg": "Admin access required"}), 403
 
+@menu.route("/<int:item_id>", methods=["PUT"])
+@admin_required
+def update_menu_item(item_id):
     item = MenuItem.query.get_or_404(item_id)
     data = request.get_json()
 
+    if "price" in data:
+        price = parse_price(data["price"])
+        if price is None:
+            return jsonify({"msg": "Price must be a non-negative number"}), 400
+        item.price = price
+
     item.name = data.get("name", item.name)
-    item.price = data.get("price", item.price)
     item.category = data.get("category", item.category)
     item.description = data.get("description", item.description)
     item.is_available = data.get("is_available", item.is_available)
@@ -101,13 +107,10 @@ def update_menu_item(item_id):
 
     return jsonify({"msg": "Menu item updated"}), 200
 
-# Admin only
-@menu.route("/<int:item_id>", methods=["DELETE"])
-@jwt_required()
-def delete_menu_item(item_id):
-    if not admin_required():
-        return jsonify({"msg": "Admin access required"}), 403
 
+@menu.route("/<int:item_id>", methods=["DELETE"])
+@admin_required
+def delete_menu_item(item_id):
     item = MenuItem.query.get_or_404(item_id)
 
     db.session.delete(item)
